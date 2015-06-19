@@ -1,0 +1,146 @@
+<div ng-controller="QueueListController" class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <small>
+                <div class="row">
+                    <h4>Queues</h4>
+                </div>
+                <div class="row">
+                    <span><input size="30" ng-model="query" placeholder="Type to search..." id="queueQuery"/></span>
+                    <span><b>Matches {{filteredQueues.length}} of {{queues.length}}</b></span>
+                    <button type="button" class="btn btn-default btn-sm" aria-label="Refresh" ng-click="refresh()">
+                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"/>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" aria-label="Send" ng-click="openSend()">
+                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"/>
+                    </button>
+                </div>
+                <div>
+                    <pagination total-items="filteredQueues.length" class="pagination-sm"
+                                items-per-page="queuePageConfig.itemsPerPage" ng-model="queuePageConfig.currentPage"
+                                boundary-links="true"
+                                max-size="20" previous-text="<" next-text=">" first-text="<<" last-text=">>"
+                        ></pagination>
+                    <div>
+                        <table class="table table-striped table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th title="Pending"><span class="glyphicon glyphicon-hourglass"
+                                                          aria-hidden="true"/>
+                                </th>
+                                <th title="Enqueued"><span class="glyphicon glyphicon-import"
+                                                           aria-hidden="true"/>
+                                </th>
+                                <th title="Dispatched"><span class="glyphicon glyphicon-transfer"
+                                                             aria-hidden="true"/></th>
+                                <th title="Dequeued"><span class="glyphicon glyphicon-export"
+                                                           aria-hidden="true"/>
+                                </th>
+                                <th title="Consumers"><span class="glyphicon glyphicon-user"
+                                                            aria-hidden="true"/>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="queue in filteredQueues = (queues | filter:query) | paginate:queuePageConfig"
+                                ng-click="queueClicked(queue)"
+                                ng-class="{info: isSelected(queue)}"
+                                >
+                                <td><b>{{queue.name}}</b></td>
+                                <td>{{queue.count}}</td>
+                                <td>{{queue.enqueues}}</td>
+                                <td>{{queue.dispatched}}</td>
+                                <td>{{queue.dequeues}}</td>
+                                <td>{{queue.consumers}}</td>
+                                <td>
+                                    <button ng-if="queue.count>0" type="button" class="btn btn-default btn-sm"
+                                            ng-click="purge(queue)" aria-label="Purge">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"/>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </small>
+        </div>
+        <div class="col-md-8">
+            <small>
+                <table class="table table-striped table-condensed">
+                    <thead>
+                    <h4>Consumers</h4>
+                    <tr>
+                        <th>ConnectionId / SessionId</th>
+                        <th title="Enqueued"><span class="glyphicon glyphicon-import" aria-hidden="true"/></th>
+                        <th title="Dispatched"><span class="glyphicon glyphicon-transfer" aria-hidden="true"/></th>
+                        <th title="Dequeued"><span class="glyphicon glyphicon-export" aria-hidden="true"/></th>
+                        <th>Last ACK</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="consumer in queueData.consumers | orderBy:['clientId','consumerId','sessionId']">
+                        <td>{{consumer.connectionId}} / {{consumer.sessionId}}</td>
+                        <td>{{consumer.enqueued}}</td>
+                        <td>{{consumer.dispatched}}</td>
+                        <td>{{consumer.dequeued}}</td>
+                        <td>{{consumer.lastAck | date:'yyyy-MM-dd HH:mm:ssZ'}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <h4>Messages</h4>
+                <div>
+                    <accordion>
+                        <div class="row">
+                            <span><input size="30" ng-model="messageQuery" placeholder="Type to search..."
+                                         id="messageQuery"/></span>
+                            <span><b>Matches {{filteredMessages.length}} of {{queueData.messages.length}}</b></span>
+
+                            <div>
+                                <pagination total-items="filteredMessages.length" class="pagination-sm"
+                                            items-per-page="messagePageConfig.itemsPerPage"
+                                            max-size="20" previous-text="<" next-text=">" first-text="<<" last-text=">>"
+                                            boundary-links="true"
+                                            ng-model="messagePageConfig.currentPage"></pagination>
+                            </div>
+                        </div>
+                        <accordion-group ng-repeat="message in filteredMessages = (queueData.messages | filter:messageQuery) | paginate:messagePageConfig">
+                            <accordion-heading>
+                                    <span class="label label-primary">{{message.messageId}}</span>
+                                    <span class="label label-primary">{{message.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</span>
+                                    <span class="label label-success">{{message.correlationId}}</span>
+                                    <span class="label label-success">{{message.groupId}}</span>
+                                <small>
+                                    {{message.text |limitTo:60}}
+                                </small>
+                            </accordion-heading>
+                            <pre><small>{{message.text}}<br/>Properties:{{message.properties | json}}</small></pre>
+                        </accordion-group>
+                    </accordion>
+                </div>
+            </small>
+        </div>
+    </div>
+    <script type="text/ng-template" id="sendMessage.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Send a message</h3>
+        </div>
+        <div class="modal-body">
+            <div>
+                <div>Queue:</div>
+                <input type="text" size="60" ng-model="sendQueue"/>
+            </div>
+            <div>
+                <div>Message:</div>
+                <textarea rows="8" cols="60" ng-model="sendMessage"/>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">Send</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+</div>

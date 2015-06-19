@@ -1,0 +1,50 @@
+ext {
+   activemqVersion = "5.11.1"
+   springBootVersion = "1.2.2.RELEASE"
+   mysqlVersion = "5.1.31"
+   camelVersion = "2.15.1"
+   snapshotVersion = "$releaseVersion-SNAPSHOT"
+}
+ext["currentVersion"] = hasProperty("release") ? releaseVersion : snapshotVersion;
+
+allprojects {
+   apply plugin: 'idea'
+   apply plugin: 'maven'
+
+   group = "com.gazelle.amq"
+   version = currentVersion;
+}
+description = 'AMQ Spring Boot'
+
+
+task wrapper(type: Wrapper) {
+   gradleVersion = '2.3'
+}
+
+subprojects {
+   
+   apply plugin: 'java'
+   apply plugin: 'groovy'
+
+   repositories {
+      mavenCentral()
+      mavenLocal()
+   }
+
+   dependencies {
+      compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
+
+      testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+      testCompile("org.spockframework:spock-core:0.7-groovy-2.0")
+      testCompile("org.spockframework:spock-spring:0.7-groovy-2.0")
+   }
+
+   test {
+      testLogging.showStandardStreams = true
+      testLogging.exceptionFormat= "full"
+      systemProperties = [
+         'test.dataDirectory': "$buildDir/resources/test"
+      ]
+   }
+}
+

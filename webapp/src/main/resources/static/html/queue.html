@@ -1,0 +1,63 @@
+<div ng-controller="QueueController" class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <h3>{{queueData.summary.name}}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <small>
+                <table class="table table-striped table-condensed">
+                    <thead>
+                    <h4>Consumers</h4>
+                    <tr>
+                        <th>ClientId</th>
+                        <th>ConnectionId</th>
+                        <th>SessionId</th>
+                        <th>Enqueued</th>
+                        <th>Dispatched</th>
+                        <th>Dequeued</th>
+                        <th>Last ACK</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="consumer in queueData.consumers | orderBy:['clientId','consumerId','sessionId']">
+                        <td>{{consumer.clientId}}</td>
+                        <td>{{consumer.connectionId}}</td>
+                        <td>{{consumer.sessionId}}</td>
+                        <td>{{consumer.enqueued}}</td>
+                        <td>{{consumer.dispatched}}</td>
+                        <td>{{consumer.dequeued}}</td>
+                        <td>{{consumer.lastAck | date:'yyyy-MM-dd HH:mm:ssZ'}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table table-striped table-condensed">
+                    <thead>
+                    <h4>Messages</h4>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <span><input ng-model="query" placeholder="Type to search..." id="queueQuery"/></span>
+                            <span><b>Matches {{filteredMessages.length}} of {{queueData.messages.length}}</b></span>
+                            <span><input type="button" value="Refresh" ng-click="refresh()"/></span>
+                        </div>
+                    </div>
+                    <tr>
+                        <th>MessageId</th>
+                        <th>Message</th>
+                        <th/>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="message in filteredMessages = (queueData.messages | filter:query) | orderBy:['messageId']" ng-if="messageOnPage($index)">
+                        <td>{{message.messageId}}</td>
+                        <td>{{message.text}}</td>
+                        <td><input type="button" value="Delete" ng-click="delete(message)"/></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <pagination total-items="filteredMessages.length" class="pagination-sm" items-per-page="itemsPerPage" ng-model="currentPage"></pagination>
+            </small>
+        </div>
+    </div>
+</div>
