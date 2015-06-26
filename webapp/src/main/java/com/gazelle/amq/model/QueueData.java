@@ -5,8 +5,6 @@ import org.apache.activemq.broker.region.Subscription;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.activemq.command.Message;
 
-import javax.jms.JMSException;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -55,9 +53,11 @@ public class QueueData {
         private String messageId;
         private String correlationId;
         private String groupId;
+        private String producer;
+        private String destination;
         private Integer groupSequence;
         private Date timestamp;
-        private Map<String, Object> properties;
+        private Map<String, String> properties;
 
         public MessageData(Message message) {
             try {
@@ -70,17 +70,20 @@ public class QueueData {
                 else {
                     this.text = "";
                 }
-                this.type = message.getType();
+                this.type = message.getClass().getSimpleName();
                 this.messageId = message.getMessageId().toString();
                 this.correlationId = message.getCorrelationId();
                 this.groupId = message.getGroupID();
                 this.groupSequence = message.getGroupSequence();
+                this.destination = message.getDestination().getPhysicalName();
+                this.producer = message.getProducerId().getConnectionId();
                 this.timestamp = new Date(message.getTimestamp());
-                this.properties = message.getProperties();
-            } catch (IOException e) {
-                this.properties = Collections.emptyMap();
-            } catch (JMSException e) {
-                e.printStackTrace();
+                this.properties = new HashMap<String, String>();
+                for ( Map.Entry<String,Object> property : message.getProperties().entrySet() ) {
+                    this.properties.put(property.getKey(), property.getValue().toString());
+                }
+            } catch (Exception e) {
+                this.text = e.getMessage();
             }
         }
 
@@ -112,7 +115,15 @@ public class QueueData {
             return timestamp;
         }
 
-        public Map<String, Object> getProperties() {
+        public String getProducer() {
+            return producer;
+        }
+
+        public String getDestination() {
+            return destination;
+        }
+
+        public Map<String, String> getProperties() {
             return properties;
         }
 

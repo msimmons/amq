@@ -109,15 +109,22 @@
                         </div>
                         <accordion-group ng-repeat="message in filteredMessages = (queueData.messages | filter:messageQuery) | paginate:messagePageConfig">
                             <accordion-heading>
-                                    <span class="label label-primary">{{message.messageId}}</span>
-                                    <span class="label label-primary">{{message.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</span>
-                                    <span class="label label-success">{{message.correlationId}}</span>
-                                    <span class="label label-success">{{message.groupId}}</span>
+                                    <span>{{$index}}</span>
+                                    <span class="label label-success">{{message.messageId}}</span>
+                                    <span class="label label-success">{{message.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</span>
                                 <small>
-                                    {{message.text |limitTo:60}}
+                                    {{message.text |limitTo:80}}
                                 </small>
                             </accordion-heading>
-                            <pre><small>{{message.text}}<br/>Properties:{{message.properties | json}}</small></pre>
+                            <pre><small>{{message.text}}
+----
+type: {{message.type}}
+correlationId: {{message.correlationId}}
+groupId: {{groupId}}
+groupSequence: {{groupSequence}}
+producer: {{message.producer}}
+destination: {{message.destination}}
+properties:{{message.properties | json}}</small></pre>
                         </accordion-group>
                     </accordion>
                 </div>
