@@ -4,6 +4,8 @@ angular.module('amqApp')
    function ($scope, HistoryResource) {
       $('#searchQuery').focus();
 
+      $scope.state = HistoryResource.state;
+
       $scope.historyPageConfig = {
          predicate:'',
          reverse:0,
@@ -13,7 +15,7 @@ angular.module('amqApp')
 
       $scope.refresh = function() {
          $scope.history = null;
-         $scope.history = HistoryResource.query({searchString:$scope.searchString});
+         $scope.history = HistoryResource.query({searchString:$scope.state.searchString});
       }
 
       $scope.formatJson = function(json) {
