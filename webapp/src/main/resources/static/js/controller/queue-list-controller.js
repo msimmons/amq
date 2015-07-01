@@ -4,6 +4,8 @@ angular.module('amqApp')
    function ($scope, QueueResource, $modal) {
       $('#queueQuery').focus();
 
+      $scope.state = QueueResource.state;
+
       $scope.queuePageConfig = {
          predicate: ['-count', 'name'],
          reverse:0,
@@ -18,10 +20,8 @@ angular.module('amqApp')
          itemsPerPage: 10
       };
 
-      $scope.queues = QueueResource.query();
-
       $scope.isSelected = function(queue) {
-         return $scope.selectedQueue && $scope.selectedQueue.name == queue.name;
+         return $scope.state.selectedQueue && $scope.state.selectedQueue.name == queue.name;
       }
 
       $scope.isMessageSelected = function(message) {
@@ -29,12 +29,12 @@ angular.module('amqApp')
       }
 
       $scope.queueClicked = function(queue) {
-         $scope.selectedQueue = queue;
+         $scope.state.selectedQueue = queue;
          $scope.getData(queue);
       }
 
       $scope.refreshData = function() {
-         if ($scope.selectedQueue) $scope.getData($scope.selectedQueue);
+         if ($scope.state.selectedQueue) $scope.getData($scope.state.selectedQueue);
       }
 
       $scope.purge = function(queue) {
@@ -52,8 +52,8 @@ angular.module('amqApp')
       $scope.refresh = function() {
          $scope.currentMessage = null;
          $scope.queues = QueueResource.query();
-         if ( $scope.selectedQueue ) {
-            $scope.getData($scope.selectedQueue);
+         if ( $scope.state.selectedQueue ) {
+            $scope.getData($scope.state.selectedQueue);
          }
       }
 
@@ -67,7 +67,7 @@ angular.module('amqApp')
       }
 
       $scope.openSend = function(theQueue, theMessage) {
-         $scope.sendQueue = theQueue ? theQueue : $scope.selectedQueue.name;
+         $scope.sendQueue = theQueue ? theQueue : $scope.state.selectedQueue.name;
          $scope.sendMessage = theMessage;
          var sendMessage = $modal.open({
             animation: true,
@@ -111,5 +111,7 @@ angular.module('amqApp')
          $scope.sendMessage = $scope.draggedMessage.text;
          $scope.openSend(queue.name, $scope.draggedMessage.text);
       }
+
+      $scope.refresh();
    }
 ]);
