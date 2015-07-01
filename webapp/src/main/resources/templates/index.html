@@ -9,15 +9,12 @@
     <link rel="stylesheet" href="css/main.css"/>
 </head>
 <body class="panel panel-default">
-<div class="panel-heading">
+<div class="panel-heading" ng-controller="HeaderController">
     <h1 th:text="${brokerName}"/>
     <nav class="navbar navbar-default navbar-static-top" role="navigation">
         <ul class="nav nav-pills">
-<!--
-            <li><a href="#/summary">Summary</a></li>
--->
-            <li role="presentation" class="active"><a href="#/queue-list">Queues</a></li>
-            <li role="presentation"><a href="#/history">History</a></li>
+            <li ng-class="{ active: isActive('queue-list')}"><a ng-href="#/queue-list" class="btn">Queues</a></li>
+            <li ng-class="{ active: isActive('history')}"><a ng-href="#/history" class="btn">History</a></li>
         </ul>
     </nav>
 </div>
