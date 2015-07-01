@@ -33,6 +33,10 @@ angular.module('amqApp')
          $scope.getData(queue);
       }
 
+      $scope.refreshData = function() {
+         if ($scope.selectedQueue) $scope.getData($scope.selectedQueue);
+      }
+
       $scope.purge = function(queue) {
          QueueResource.delete({queueName:queue.name}).
          $promise.then(
@@ -41,7 +45,7 @@ angular.module('amqApp')
          )
       }
 
-      $scope.delete = function(message) {
+      $scope.deleteMessage = function(message) {
          console.log('Deleting message '+message);
       }
 
@@ -62,17 +66,15 @@ angular.module('amqApp')
          $scope.currentMessage = message;
       }
 
-      $scope.openSend = function() {
-         $scope.sendQueue=$scope.selectedQueue ? $scope.selectedQueue.name : '';
+      $scope.openSend = function(theQueue, theMessage) {
+         $scope.sendQueue = theQueue ? theQueue : $scope.selectedQueue.name;
+         $scope.sendMessage = theMessage;
          var sendMessage = $modal.open({
             animation: true,
             templateUrl: 'sendMessage.html',
             scope: $scope,
             controller: 'QueueListController',
-            size: 'lg',
-            resolve: {
-               sendQueue: function() {return $scope.sendQueue;}
-            }
+            size: 'lg'
          });
 
          sendMessage.result.then(
@@ -98,5 +100,16 @@ angular.module('amqApp')
          $scope.$dismiss('cancelled');
       }
 
+      $scope.dragStart = function(message) {
+         $scope.draggedMessage = message;
+      }
+
+      $scope.dragOver = function(queue) {
+      }
+
+      $scope.drop = function(queue) {
+         $scope.sendMessage = $scope.draggedMessage.text;
+         $scope.openSend(queue.name, $scope.draggedMessage.text);
+      }
    }
 ]);
