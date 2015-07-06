@@ -119,9 +119,9 @@
                     <span><input type="checkbox"></span>
                         <span draggable="true" gz-drag-start="dragStart(message)"
                               ng-click="message.isCollapsed=!message.isCollapsed">
-                        <span class="label label-success">{{message.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</span>
-                        <span class="label label-success">{{message.messageId}}</span>
-                        <span class="label label-success">{{message.text | limitTo:80}}...</span>
+                        <span class="label label-default">{{message.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</span>
+                        <span class="label label-default">{{message.messageId}}</span>
+                        <span class="label label-default">{{message.text | limitTo:80}}...</span>
                         </span>
                     <button title="Delete" type="button" class="btn btn-default btn-sm"
                             ng-click="deleteMessage(message)" aria-label="Delete">
@@ -129,7 +129,7 @@
                     </button>
                     <div collapse="!message.isCollapsed">
                         <div class="row well well-sm small">
-                            <pre>{{message.text}}
+                            <pre class="pre-white">{{message.text}}
 ----
 type: {{message.type}}
 correlationId: {{message.correlationId}}

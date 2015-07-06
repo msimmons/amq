@@ -14,25 +14,26 @@
                 </div>
                 <hr/>
                 <div class="row">
-                    <span><input size="30" ng-model="filterString" placeholder="Filter results..." id="historyFilter"/></span>
                 </div>
                 <div>
-                    <pagination total-items="filteredHistory.length" class="pagination-sm"
-                                items-per-page="historyPageConfig.itemsPerPage" ng-model="historyPageConfig.currentPage"
-                                boundary-links="true"
-                                max-size="20" previous-text="<" next-text=">" first-text="<<" last-text=">>">
-                    </pagination>
                     <div>
-                        <small>
                         <accordion>
+                            <div class="small">
+                            <pagination total-items="filteredHistory.length" class="pagination-sm"
+                                        items-per-page="historyPageConfig.itemsPerPage" ng-model="historyPageConfig.currentPage"
+                                        boundary-links="true"
+                                        max-size="20" previous-text="<" next-text=">" first-text="<<" last-text=">>">
+                            </pagination>
+                            </div>
+                            <span><input size="30" ng-model="filterString" placeholder="Filter results..." id="historyFilter"/></span>
+                            <span>Matches {{filteredHistory.length}} of {{history.length}}</span>
                             <accordion-group ng-repeat="item in filteredHistory = (history | filter:filterString) | paginate:historyPageConfig">
                                 <accordion-heading>
                                     <small>{{item.createdAt| date:'yyyy-MM-dd HH:mm:ss'}} - {{item.collection}}: {{item.summary}}</small>
                                 </accordion-heading>
-                                <pre><small>{{formatJson(item.message)}}</small></pre>
+                                <pre class="pre-white"><small>{{formatJson(item.message)}}</small></pre>
                             </accordion-group>
                         </accordion>
-                        </small>
                     </div>
                 </div>
             </small>

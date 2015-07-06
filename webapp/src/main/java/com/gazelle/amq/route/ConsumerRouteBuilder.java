@@ -29,6 +29,14 @@ public class ConsumerRouteBuilder extends SpringRouteBuilder {
         from("activemq:erp.foo?maxConcurrentConsumers=10")
             .routeId("theConsumer3")
             .process(new ConsumerProcessor("consumer3"));
+
+        from("activemq:Consumer.A.VirtualTopic.mytopic")
+            .routeId("ConsumerA1")
+            .process(new ConsumerProcessor("consumerA1"));
+
+        from("activemq:Consumer.A.VirtualTopic.mytopic")
+            .routeId("ConsumerA2")
+            .process(new ConsumerProcessor("consumerA2"));
     }
 
     public class ConsumerProcessor implements Processor {

@@ -1,3 +1,8 @@
-.label-success {
-   color: black
+.label-default {
+   color: black;
+   background-color: lightgray;
+}
+
+.pre-white {
+   background-color: white
 }
