@@ -1,5 +1,4 @@
 apply plugin: 'spring-boot'
-apply plugin: 'war'
 
 buildscript {
     repositories {
@@ -58,7 +57,6 @@ dependencies {
     runtime("org.apache.activemq:activemq-kahadb-store:${activemqVersion}")
     runtime("org.apache.activemq:activemq-stomp:${activemqVersion}")
 
-    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}")
 }
 
 processResources {

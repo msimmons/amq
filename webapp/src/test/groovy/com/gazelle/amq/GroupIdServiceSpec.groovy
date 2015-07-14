@@ -32,7 +32,7 @@ class GroupIdServiceSpec extends Specification {
         'erp.item'|'<itemPacked>\n' +
             '<srNumber>SR120398</srNumber>\n' +
             '<disposition>RETAIL</disposition>\n' +
-            '</itemPacked>'|8
+            '</itemPacked>'|9
 
     }
 }
